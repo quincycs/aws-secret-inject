@@ -1,4 +1,4 @@
-Inject aws secrets, ssm parameters into config files.  Works with any text file.
+Inject aws secrets, ssm parameters into config files.  Works with any text file.  Below is an example of a `.env` file, but it works for any text file (eg xml or json).
 
 ## Usage
 
@@ -30,7 +30,7 @@ anotherSecret="wwww"
 someSecretJso="zzzz"
 ```
 
-Note: quotes are necessary.
+Note: quotes are not necessary.
 
 ## Thanks
 
