@@ -1,0 +1,24 @@
+{
+  "name": "aws-secret-inject",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "gcloud-secret-inject": "index.js"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.521.0",
+    "@aws-sdk/client-ssm": "^3.521.0",
+    "yargs": "^17.7.0"
+  },
+  "author": "Quincy Mitchell",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/quincycs/aws-secret-inject"
+  },
+  "license": "MIT"
+}
