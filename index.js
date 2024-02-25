@@ -39,44 +39,34 @@ const fetchSSMParameter = async (parameterName, withDecryption = false) => {
 };
 
 const processLine = async (line) => {
-  const [key, value] = line.split('=');
-  const match = value.match(/"(.+?):(.+)"/);
+  const regex = /(secret-json:|secret:|secure-ssm:|ssm:)([\w/-]+)(\.\{(\w+)\})?/;
+  const match = line.match(regex);
   if (!match) return line; // Return original line if no match
 
-  const [, service, path] = match;
-  let secretId = match[2];
-  let jsonKey;
-
-  // Check if it's a JSON secret and extract the JSON key
-  if (service === 'secret-json') {
-    const jsonPathMatch = path.match(/(.+)\.\{(.+)\}/);
-    console.log('jsonPathMatch', jsonPathMatch);
-    secretId = jsonPathMatch[1];
-    jsonKey = jsonPathMatch[2];
-  }
-
+  const [fullMatch, service, path, , jsonKey] = match;
+  // console.log('Match:', fullMatch, service, path, jsonKey);
   let newValue;
 
   switch (service) {
-    case 'secret-json':
-      const secretString = await fetchSecretValue(secretId);
+    case 'secret-json:':
+      const secretString = await fetchSecretValue(path);
       const secretJson = JSON.parse(secretString);
       newValue = secretJson[jsonKey];
       break;
-    case 'secret':
-      newValue = await fetchSecretValue(secretId);
+    case 'secret:':
+      newValue = await fetchSecretValue(path);
       break;
-    case 'secure-ssm':
-      newValue = await fetchSSMParameter(secretId, true);
+    case 'secure-ssm:':
+      newValue = await fetchSSMParameter(path, true);
       break;
-    case 'ssm':
-      newValue = await fetchSSMParameter(secretId);
+    case 'ssm:':
+      newValue = await fetchSSMParameter(path);
       break;
     default:
       return line; // Return original line if service is not recognized
   }
 
-  return `${key}="${newValue}"`;
+  return line.replace(fullMatch, newValue);
 };
 
 
